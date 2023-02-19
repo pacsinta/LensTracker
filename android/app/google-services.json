@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "999915558851",
+    "project_id": "lenstracker-62a56",
+    "storage_bucket": "lenstracker-62a56.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:999915558851:android:53557db2b23ae8dcbb8f76",
+        "android_client_info": {
+          "package_name": "com.example.lens_tracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "999915558851-rjgnpdhs74nbof2pjfckk4cbqhudt3ao.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxFYVjnSDAqfYoqqxLQF1Hx0Q7bIuI9vA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "999915558851-rjgnpdhs74nbof2pjfckk4cbqhudt3ao.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "999915558851-et8v78mu3ojshv8ilf09p2im04m56dok.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.lensTracker"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
