@@ -101,25 +101,37 @@ class _LoginState extends State<Login> {
                         _isLoading = true;
                       });
 
-                      /*try {
-                        final credential = await FirebaseAuth.instance
-                            .createUserWithEmailAndPassword(
-                          email: emailController.text,
-                          password: pwdController.text,
-                        );
+                      try {
+                        final credential = _isLogin == true ? 
+                          await FirebaseAuth.instance
+                              .createUserWithEmailAndPassword(
+                            email: emailController.text,
+                            password: pwdController.text,
+                          ) : 
+                          await FirebaseAuth.instance
+                              .createUserWithEmailAndPassword(
+                            email: emailController.text,
+                            password: pwdController.text,
+                          );
 
                         if(credential.user != null && context.mounted) {
                           context.go('/home');
-                        }
+                        }else{
+                          const snack = SnackBar(content: Text("An error has occurred."));
+                          ScaffoldMessenger.of(context).showSnackBar(snack);  
+                        } 
                       } on FirebaseAuthException catch (e) {
                         if (e.code == 'weak-password') {
-                          print('The password provided is too weak.');
+                          const snack = SnackBar(content: Text("Too weak password."));
+                          ScaffoldMessenger.of(context).showSnackBar(snack);
                         } else if (e.code == 'email-already-in-use') {
-                          print('The account already exists for that email.');
+                          const snack = SnackBar(content: Text("The account already exists for that email."));
+                          ScaffoldMessenger.of(context).showSnackBar(snack);
                         }
                       } catch (e) {
-                        print(e);
-                      }*/
+                        const snack = SnackBar(content: Text("An error has occurred."));
+                        ScaffoldMessenger.of(context).showSnackBar(snack);
+                      }
 
                       setState(() {
                         _isLoading = false;
@@ -136,7 +148,7 @@ class _LoginState extends State<Login> {
                     _isLogin = !_isLogin;
                   });
                 },
-                child: Text('Switch to ${_isLogin ? 'Register' : 'Login'}'),
+                child: Text('Switch to ${_isLogin ? 'Login' : 'Register'}'),
               ),
             ],
           ),

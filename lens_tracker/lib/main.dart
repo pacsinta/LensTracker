@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:lens_tracker/home.dart';
+import 'package:lens_tracker/splash.dart';
 import 'firebase_options.dart';
 import 'login.dart';
 
@@ -9,11 +11,17 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return const Login();
+        return const SplashPage();
       },
       routes: <RouteBase>[
         GoRoute(
           path: 'home',
+          builder: (BuildContext context, GoRouterState state) {
+            return const Home();
+          },
+        ),
+        GoRoute(
+          path: 'login',
           builder: (BuildContext context, GoRouterState state) {
             return const Login();
           },
