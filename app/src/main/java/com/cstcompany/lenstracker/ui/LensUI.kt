@@ -10,39 +10,22 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.cstcompany.lenstracker.model.EyeSide
 import com.cstcompany.lenstracker.model.StorageHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun LensUI() {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-
-        val storageHandler = StorageHandler(null, LocalContext.current)
-        var daysLeft = remember{ mutableStateListOf(storageHandler.getDayCount()) }
-
-        LensView(EyeSide.LEFT, 30){
-            coroutineScope.launch { {
-                storageHandler.resetCounter()
-                daysLeft[0] = storageHandler.getDayCount()
-            }
-        }
-        Spacer(modifier = Modifier.width(20.dp))
-        LensView(EyeSide.RIGHT, 30, storageHandler::resetCounter)
-    }
+fun MainUi() {
+    LensUI()
 }
 
 @Composable
@@ -65,15 +48,32 @@ fun LensView(side: EyeSide, days: Int, resetCounter: () -> Unit) {
 }
 
 @Composable
-fun HeaderText(text: String) {
-    Text(
-        text = text,
-        fontSize = 30.sp
-    )
-}
+fun LensUI() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        val auth = FirebaseAuth.getInstance()
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun MainUi() {
-    LensUI()
+        val storageHandler = StorageHandler(auth.currentUser, LocalContext.current)
+        val daysLeft = storageHandler.getDayCount().collectAsState(0)
+        val coroutineScope = rememberCoroutineScope()
+
+        LensView(EyeSide.LEFT, daysLeft.value){
+            coroutineScope.launch {
+                run {
+                    storageHandler.resetCounter()
+                }
+            }
+        }
+        Spacer(modifier = Modifier.width(20.dp))
+        LensView(EyeSide.RIGHT, daysLeft.value){
+            coroutineScope.launch {
+                run {
+                    storageHandler.resetCounter()
+                }
+            }
+        }
+    }
 }
