@@ -16,3 +16,5 @@ local.properties
 app/google-services.json
 /.idea/
 /lens_tracker/.idea/
+/app/release/
+/app/debug/
