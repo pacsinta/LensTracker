@@ -8,6 +8,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -25,13 +30,24 @@ import kotlinx.coroutines.launch
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun MainUi() {
-    LensUI()
+    LensUI(snackbarHostState = SnackbarHostState())
 }
 
 @Composable
-fun LensView(side: EyeSide, days: Int, resetCounter: () -> Unit) {
+fun LensView(
+    side: EyeSide,
+    days: Int,
+    modifier: Modifier = Modifier,
+    btnModifier: Modifier = Modifier,
+    btnColors: ButtonColors = ButtonDefaults.buttonColors(
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+        containerColor = MaterialTheme.colorScheme.primary
+    ),
+    resetCounter: () -> Unit
+) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
     ) {
         HeaderText(
             text = if(side == EyeSide.LEFT) "Left Eye" else "Right Eye"
@@ -39,39 +55,64 @@ fun LensView(side: EyeSide, days: Int, resetCounter: () -> Unit) {
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        Text(text = "Days left: $days")
+        Text(text = "Days wore: $days")
 
-        Button(onClick = { resetCounter() }) {
+        Button(onClick = { resetCounter() }, modifier = btnModifier, colors = btnColors) {
             Text(text = "Change Lens")
         }
     }
 }
 
 @Composable
-fun LensUI() {
-    Row(
+fun LensUI(snackbarHostState: SnackbarHostState) {
+    Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         val auth = FirebaseAuth.getInstance()
-
         val storageHandler = StorageHandler(auth.currentUser, LocalContext.current)
-        val daysLeft = storageHandler.getDayCount().collectAsState(0)
-        val coroutineScope = rememberCoroutineScope()
+        val daysLeft = storageHandler.getDayCount().collectAsState(arrayOf(0, 0))
+        NoDataSnackbar(daysLeft, snackbarHostState)
 
-        LensView(EyeSide.LEFT, daysLeft.value){
-            coroutineScope.launch {
-                run {
-                    storageHandler.resetCounter()
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            val coroutineScope = rememberCoroutineScope()
+
+            LensView(
+                side = EyeSide.LEFT,
+                days = if(daysLeft.value[0] < 0) 0 else daysLeft.value[0],
+                btnColors = ButtonDefaults.buttonColors(
+                    contentColor = if(daysLeft.value[0] < 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onPrimary,
+                    containerColor = if(daysLeft.value[0] < 0) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.primary
+                )
+            ){
+                coroutineScope.launch {
+                    run {
+                        storageHandler.resetCounter(EyeSide.LEFT)
+                        snackbarHostState.currentSnackbarData?.dismiss()
+                        snackbarHostState.showSnackbar("Left lens changed", duration = SnackbarDuration.Short)
+                    }
                 }
             }
-        }
-        Spacer(modifier = Modifier.width(20.dp))
-        LensView(EyeSide.RIGHT, daysLeft.value){
-            coroutineScope.launch {
-                run {
-                    storageHandler.resetCounter()
+            Spacer(modifier = Modifier.width(20.dp))
+            LensView(
+                side = EyeSide.RIGHT,
+                days = if(daysLeft.value[1] < 0) 0 else daysLeft.value[1],
+                btnColors = ButtonDefaults.buttonColors(
+                    contentColor = if(daysLeft.value[1] < 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onPrimary,
+                    containerColor = if(daysLeft.value[1] < 0) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.primary
+                )
+            ){
+                coroutineScope.launch {
+                    run {
+                        storageHandler.resetCounter(EyeSide.RIGHT)
+                        snackbarHostState.currentSnackbarData?.dismiss()
+                        snackbarHostState.showSnackbar("Right lens changed")
+                    }
                 }
             }
         }

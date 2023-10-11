@@ -16,23 +16,25 @@ class StorageHandler(private val user: FirebaseUser?, private val context: Conte
     companion object {
         private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("LensData")
     }
-    suspend fun resetCounter(){
+    suspend fun resetCounter(side: EyeSide){
         if(user == null){
             context.dataStore.edit { prefs ->
-                prefs[longPreferencesKey("changedDay")] = LocalDate.now().toEpochDay()
+                prefs[longPreferencesKey(if(side == EyeSide.LEFT) "changedDayLeft" else "changedDayRight")] = LocalDate.now().toEpochDay()
             }
         }
     }
 
-    fun getDayCount(): Flow<Int> {
+    fun getDayCount(): Flow<Array<Int>> {
         if(user == null){
             return context.dataStore.data.map { prefs ->
-                val changedDay = prefs[longPreferencesKey("changedDay")] ?: LocalDate.now().toEpochDay()
-                val days = LocalDate.now().toEpochDay() - changedDay
-                return@map days.toInt()
+                val changedDayRight = prefs[longPreferencesKey("changedDayRight")] ?: -1
+                val changedDayLeft = prefs[longPreferencesKey("changedDayLeft")] ?: -1
+                val daysRight = if(changedDayRight != -1L) LocalDate.now().toEpochDay() - changedDayRight else -1
+                val daysLeft = if(changedDayLeft != -1L) LocalDate.now().toEpochDay() - changedDayLeft else -1
+                return@map arrayOf(daysLeft.toInt(), daysRight.toInt())
             }
         }
 
-        return flow { emit(0) }
+        return flow { emit(arrayOf(0, 0)) }
     }
 }
