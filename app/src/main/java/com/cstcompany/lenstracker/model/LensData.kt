@@ -5,8 +5,8 @@ import java.time.LocalDate
 data class LensData(
     val latestChange: LocalDate = LocalDate.now(),
     val side: EyeSide,
-    val timeToWear: Int = 30, // how many days can you wear the lens
-){
+    var daysLeft: Int = 30, // how many days can you wear the lens
+) {
     fun changeLens(): LensData {
         return copy(latestChange = LocalDate.now())
     }
