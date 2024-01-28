@@ -1,6 +1,6 @@
 package com.cstcompany.lenstracker.model
 
-enum class EyeSide {
-    LEFT,
-    RIGHT
+enum class EyeSide(val sideName: String) {
+    LEFT("Left"),
+    RIGHT("Right")
 }

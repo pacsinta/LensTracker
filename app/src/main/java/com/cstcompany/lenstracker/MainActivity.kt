@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -24,10 +25,12 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.cstcompany.lenstracker.model.EyeSide
 import com.cstcompany.lenstracker.model.LensData
 import com.cstcompany.lenstracker.model.StorageHandler
+import com.cstcompany.lenstracker.model.changeLens
 import com.cstcompany.lenstracker.ui.LensUI
 import com.cstcompany.lenstracker.ui.theme.LensTrackerTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -68,7 +71,7 @@ class MainActivity : ComponentActivity() {
                     ) { padding ->
                         SplashScreen(Modifier.padding(padding), currentUser, snackbarHostState, arrayOf(
                             lensData[0], lensData[1]
-                        ))
+                        ), storageHandler)
                     }
                 }
             }
@@ -81,7 +84,8 @@ fun SplashScreen(
     modifier: Modifier = Modifier,
     currentUser: FirebaseUser? = null,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
-    lensData: Array<LensData>
+    lensData: Array<LensData>,
+    storageHandler: StorageHandler,
 ) {
     Row(
         modifier = Modifier
@@ -91,7 +95,7 @@ fun SplashScreen(
         horizontalArrangement = Arrangement.Center
     ) {
         if (currentUser == null) {
-            LensUI(snackbarHostState, lensData){}
+            LensUI(snackbarHostState, lensData, storageHandler,  ::changeLens)
         }
     }
 }
