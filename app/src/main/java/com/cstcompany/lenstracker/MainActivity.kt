@@ -34,6 +34,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.cstcompany.lenstracker.model.EyeSide
 import com.cstcompany.lenstracker.model.LensData
 import com.cstcompany.lenstracker.model.StorageHandler
+import com.cstcompany.lenstracker.model.changeLens
 import com.cstcompany.lenstracker.ui.LensUI
 import com.cstcompany.lenstracker.ui.SettingsUi
 import com.cstcompany.lenstracker.ui.theme.LensTrackerTheme
@@ -65,7 +66,7 @@ class MainActivity : ComponentActivity() {
 
             var uiSelector by remember{ mutableIntStateOf(0) }
             when(uiSelector){
-                0 -> MainUI(lensData = lensData.toTypedArray(), currentUser){
+                0 -> MainUI(lensData = lensData.toTypedArray(), currentUser, storageHandler){
                     uiSelector = it
                 }
                 1 -> SettingsUi(){
@@ -90,6 +91,7 @@ fun MainPreview() {
 fun MainUI(
     lensData: Array<LensData>,
     currentUser: FirebaseUser? = null,
+    storageHandler: StorageHandler? = null,
     changeUiCallback: (Int) -> Unit
 ){
     LensTrackerTheme {
@@ -117,7 +119,9 @@ fun MainUI(
                     }
                 }
             ) { padding ->
-                SplashScreen(Modifier.padding(padding), currentUser, snackbarHostState, lensData)
+                if (storageHandler != null) {
+                    SplashScreen(Modifier.padding(padding), currentUser, snackbarHostState, lensData, storageHandler)
+                }
             }
         }
     }
@@ -128,7 +132,8 @@ fun SplashScreen(
     modifier: Modifier = Modifier,
     currentUser: FirebaseUser? = null,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
-    lensData: Array<LensData>
+    lensData: Array<LensData>,
+    storageHandler: StorageHandler,
 ) {
     Row(
         modifier = Modifier
@@ -138,7 +143,7 @@ fun SplashScreen(
         horizontalArrangement = Arrangement.Center
     ) {
         if (currentUser == null) {
-            LensUI(snackbarHostState, lensData){}
+            LensUI(snackbarHostState, lensData, storageHandler, ::changeLens)
         }
     }
 }
