@@ -3,14 +3,13 @@ package com.cstcompany.lenstracker.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cstcompany.lenstracker.model.EyeSide
 import com.cstcompany.lenstracker.ui.theme.LensTrackerTheme
-import kotlin.math.exp
 
 @Preview
 @Composable
@@ -64,7 +62,7 @@ fun SettingsUi(
                     ){
                         IconButton(onClick = { changeUiCallback(1) }) {
                             // settings icon
-                            Icon(Icons.Rounded.ArrowBack, contentDescription = "Settings")
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Settings")
                         }
                     }
                 }
