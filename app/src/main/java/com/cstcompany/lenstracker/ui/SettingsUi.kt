@@ -60,7 +60,7 @@ fun SettingsUi(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.End
                     ){
-                        IconButton(onClick = { changeUiCallback(1) }) {
+                        IconButton(onClick = { changeUiCallback(0) }) {
                             // settings icon
                             Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Settings")
                         }
@@ -71,7 +71,7 @@ fun SettingsUi(
                     modifier = Modifier
                         .padding(top = 55.dp)
                         .fillMaxSize()
-                        .padding(bottom = 50.dp),
+                        .padding(padding),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ){

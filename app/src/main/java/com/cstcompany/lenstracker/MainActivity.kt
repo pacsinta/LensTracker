@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
             val lensData = remember{ mutableStateListOf(LensData(side = EyeSide.RIGHT), LensData(side = EyeSide.LEFT)) }
             LaunchedEffect(true)
             {
-                lifecycle.repeatOnLifecycle(Lifecycle.State.INITIALIZED) {
+                lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     launch {
                         storageHandler.getDayCount().collectLatest {
                             lensData[0].daysLeft = it[0]
