@@ -31,6 +31,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.cstcompany.lenstracker.model.EyeSide
 import com.cstcompany.lenstracker.ui.theme.LensTrackerTheme
 import kotlin.math.exp
 
@@ -76,8 +77,8 @@ fun SettingsUi(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ){
-                    ExpirationSetter()
-                    ExpirationSetter()
+                    ExpirationSetter(EyeSide.RIGHT)
+                    ExpirationSetter(EyeSide.LEFT)
                 }
             }
         }
@@ -85,11 +86,13 @@ fun SettingsUi(
 }
 
 @Composable
-fun ExpirationSetter() {
+fun ExpirationSetter(side: EyeSide) {
     Row(
-        Modifier.padding(bottom = 10.dp, top = 10.dp)
+        Modifier.padding(bottom = 10.dp, top = 10.dp, start = 10.dp, end = 10.dp).fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text("Right expiration date: ", fontSize = 30.sp)
+        Text(if(side == EyeSide.RIGHT) "Right expiration date: " else "Left expiration date: ", fontSize = 30.sp)
 
         var expirationDate by remember{ mutableIntStateOf(30) }
         TextField(
